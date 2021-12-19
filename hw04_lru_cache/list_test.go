@@ -48,4 +48,55 @@ func TestList(t *testing.T) {
 		}
 		require.Equal(t, []int{70, 80, 60, 40, 10, 30, 50}, elems)
 	})
+
+	t.Run("the first and the only element", func(t *testing.T) {
+		l := NewList()
+		l.PushFront(10)
+
+		require.Equal(t, 1, l.Len())
+		require.Equal(t, l.Front().Value, 10)
+		require.Equal(t, l.Back().Value, 10)
+		require.Nil(t, l.Front().Prev)
+		require.Nil(t, l.Front().Next)
+	})
+
+	t.Run("the last and the only element", func(t *testing.T) {
+		l := NewList()
+		l.PushBack(10)
+
+		require.Equal(t, 1, l.Len())
+		require.Equal(t, l.Front().Value, 10)
+		require.Equal(t, l.Back().Value, 10)
+		require.Nil(t, l.Front().Prev)
+		require.Nil(t, l.Front().Next)
+	})
+
+	t.Run("delete an element from the blank list", func(t *testing.T) {
+		l := NewList()
+		var element *ListItem
+		l.Remove(element)
+		require.Equal(t, 0, l.Len())
+	})
+
+	t.Run("delete the nil element", func(t *testing.T) {
+		l := NewList()
+		l.PushBack(10)
+		l.Remove(nil)
+		require.Equal(t, 1, l.Len())
+	})
+
+	t.Run("move to front in the blank list", func(t *testing.T) {
+		l := NewList()
+		var element *ListItem
+		l.MoveToFront(element)
+		require.Equal(t, 0, l.Len())
+		require.Nil(t, l.Front())
+	})
+
+	t.Run("move to front the nil element", func(t *testing.T) {
+		l := NewList()
+		l.PushBack(10)
+		l.MoveToFront(nil)
+		require.Equal(t, 10, l.Front().Value)
+	})
 }
