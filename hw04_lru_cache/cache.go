@@ -15,8 +15,7 @@ type lruCache struct {
 }
 
 func (cache lruCache) Set(key Key, value interface{}) bool {
-	item := cache.items[key]
-	if item == nil {
+	if cache.items[key] == nil {
 		cache.queue.PushFront(value)
 		cache.items[key] = cache.queue.Front()
 		if cache.queue.Len() > cache.capacity {
@@ -29,12 +28,11 @@ func (cache lruCache) Set(key Key, value interface{}) bool {
 			}
 		}
 		return false
-	} else {
-		item.Value = value
-		cache.queue.MoveToFront(item)
-		cache.items[key] = cache.queue.Front()
-		return true
 	}
+	cache.items[key].Value = value
+	cache.queue.MoveToFront(cache.items[key])
+	cache.items[key] = cache.queue.Front()
+	return true
 }
 
 func (cache lruCache) Get(key Key) (interface{}, bool) {
@@ -51,8 +49,7 @@ func (cache lruCache) Get(key Key) (interface{}, bool) {
 }
 
 func (cache lruCache) Clear() {
-	cache.items = nil
-	cache.queue = nil
+
 }
 
 func NewCache(capacity int) Cache {
