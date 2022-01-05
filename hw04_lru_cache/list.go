@@ -78,7 +78,7 @@ func (l *list) Remove(i *ListItem) {
 			}
 		case l.last:
 			{
-				l.last = i
+				l.last = i.Prev
 				l.last.Next = nil
 				l.len--
 			}
@@ -107,6 +107,7 @@ func (l *list) MoveToFront(i *ListItem) {
 		l.first.Prev = i
 	} else if (l.len > 1) && (i == l.last) {
 		i.Prev.Next = nil
+		l.last = i.Prev
 		i.Prev = nil
 		i.Next = l.first
 		l.first.Prev = i
