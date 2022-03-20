@@ -17,7 +17,6 @@ type ListItem struct {
 }
 
 type list struct {
-	slice []*ListItem
 	first *ListItem
 	last  *ListItem
 	len   int
@@ -45,7 +44,6 @@ func (l *list) PushFront(v interface{}) *ListItem {
 	} else {
 		l.first, l.last = &newElement, &newElement
 	}
-	l.slice = append(l.slice, &newElement)
 	l.len++
 
 	return l.first
@@ -61,7 +59,6 @@ func (l *list) PushBack(v interface{}) *ListItem {
 	} else {
 		l.first, l.last = &newElement, &newElement
 	}
-	l.slice = append(l.slice, &newElement)
 	l.len++
 
 	return l.last
@@ -71,47 +68,25 @@ func (l *list) Remove(i *ListItem) {
 	if (l.len > 0) && (i != nil) {
 		switch i {
 		case l.first:
-			{
-				l.first = i
-				l.first.Prev = nil
-				l.len--
-			}
+			l.first = i.Next
+			l.first.Prev = nil
 		case l.last:
-			{
-				l.last = i.Prev
-				l.last.Next = nil
-				l.len--
-			}
+			l.last = i.Prev
+			l.last.Next = nil
 		default:
-			{
-				prev := i.Prev
-				next := i.Next
-				i.Prev.Next = next
-				i.Next.Prev = prev
-				l.len--
-			}
+			prev := i.Prev
+			next := i.Next
+			i.Prev.Next = next
+			i.Next.Prev = prev
 		}
+		l.len--
 	}
 }
 
 func (l *list) MoveToFront(i *ListItem) {
-	if (l.len > 1) && (i != l.first) && (i != l.last) {
-		prev := i.Prev
-		next := i.Next
-
-		i.Prev.Next = next
-		i.Next.Prev = prev
-
-		i.Prev = nil
-		i.Next = l.first
-		l.first.Prev = i
-	} else if (l.len > 1) && (i == l.last) {
-		i.Prev.Next = nil
-		l.last = i.Prev
-		i.Prev = nil
-		i.Next = l.first
-		l.first.Prev = i
-		l.first = i
+	if l.len > 0 && i != nil {
+		l.PushFront(i.Value)
+		l.Remove(i)
 	}
 }
 

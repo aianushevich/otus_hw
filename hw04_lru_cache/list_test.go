@@ -99,4 +99,24 @@ func TestList(t *testing.T) {
 		l.MoveToFront(nil)
 		require.Equal(t, 10, l.Front().Value)
 	})
+
+	t.Run("move to front the only element", func(t *testing.T) {
+		l := NewList()
+		l.PushBack(10)
+		l.MoveToFront(l.Front())
+		require.Equal(t, 10, l.Front().Value)
+		require.Equal(t, 10, l.Back().Value)
+		require.Equal(t, 1, l.Len())
+	})
+
+	t.Run("delete first element", func(t *testing.T) {
+		l := NewList()
+		l.PushBack(10)
+		l.PushBack(20)
+		l.PushBack(30)
+		l.Remove(l.Front())
+		require.Equal(t, 20, l.Front().Value)
+		require.Equal(t, 30, l.Back().Value)
+		require.Equal(t, 2, l.Len())
+	})
 }

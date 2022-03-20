@@ -1,5 +1,7 @@
 package hw04lrucache
 
+import "fmt"
+
 type Key string
 
 type Cache interface {
@@ -15,10 +17,8 @@ type lruCache struct {
 }
 
 func (cache lruCache) Set(key Key, value interface{}) bool {
-	if cache.items[key] == nil {
-		cache.queue.PushFront(value)
-		cache.items[key] = cache.queue.Front()
-		if cache.queue.Len() > cache.capacity {
+	if _, ok := cache.items[key]; ok == false {
+		if cache.queue.Len() == cache.capacity {
 			lastElement := cache.queue.Back()
 			cache.queue.Remove(lastElement)
 			for k, v := range cache.items {
@@ -27,28 +27,29 @@ func (cache lruCache) Set(key Key, value interface{}) bool {
 				}
 			}
 		}
+		cache.items[key] = cache.queue.PushFront(value)
 		return false
 	}
-	cache.items[key].Value = value
-	cache.queue.MoveToFront(cache.items[key])
-	cache.items[key] = cache.queue.Front()
+	cache.queue.Remove(cache.items[key])
+	cache.items[key] = cache.queue.PushFront(value)
 	return true
 }
 
 func (cache lruCache) Get(key Key) (interface{}, bool) {
-	if len(cache.items) == 0 {
-		return nil, false
-	}
-
-	item := cache.items[key]
-	if item == nil {
+	item, ok := cache.items[key]
+	if !ok {
 		return nil, false
 	}
 	cache.queue.MoveToFront(item)
+	cache.items[key] = cache.queue.Front()
+	fmt.Println(cache.queue.Front())
+	fmt.Println(cache.queue.Back())
 	return item.Value, true
 }
 
 func (cache lruCache) Clear() {
+	cache.items = make(map[Key]*ListItem, cache.capacity)
+	cache.queue = NewList()
 }
 
 func NewCache(capacity int) Cache {
