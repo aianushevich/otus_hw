@@ -17,7 +17,7 @@ type lruCache struct {
 }
 
 func (cache lruCache) Set(key Key, value interface{}) bool {
-	if _, ok := cache.items[key]; ok == false {
+	if _, ok := cache.items[key]; !ok {
 		if cache.queue.Len() == cache.capacity {
 			lastElement := cache.queue.Back()
 			cache.queue.Remove(lastElement)
@@ -47,7 +47,7 @@ func (cache lruCache) Get(key Key) (interface{}, bool) {
 	return item.Value, true
 }
 
-func (cache lruCache) Clear() {
+func (cache *lruCache) Clear() {
 	cache.items = make(map[Key]*ListItem, cache.capacity)
 	cache.queue = NewList()
 }
