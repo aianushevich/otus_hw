@@ -92,6 +92,18 @@ func TestCache(t *testing.T) {
 		_, ok = c.Get("ccc")
 		require.False(t, ok)
 	})
+
+	t.Run("clear logic", func(t *testing.T) {
+		c := NewCache(3)
+
+		wasInCache := c.Set("aaa", 11)
+		require.False(t, wasInCache)
+
+		c.Clear()
+
+		wasInCache = c.Set("aaa", 11)
+		require.False(t, wasInCache)
+	})
 }
 
 func TestCacheMultithreading(t *testing.T) {
