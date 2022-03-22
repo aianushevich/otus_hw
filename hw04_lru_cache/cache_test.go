@@ -50,7 +50,59 @@ func TestCache(t *testing.T) {
 	})
 
 	t.Run("purge logic", func(t *testing.T) {
-		// Write me
+		c := NewCache(3)
+
+		wasInCache := c.Set("aaa", 11)
+		require.False(t, wasInCache)
+
+		wasInCache = c.Set("bbb", 22)
+		require.False(t, wasInCache)
+
+		wasInCache = c.Set("ccc", 33)
+		require.False(t, wasInCache)
+
+		wasInCache = c.Set("ddd", 44)
+		require.False(t, wasInCache)
+
+		_, ok := c.Get("aaa")
+		require.False(t, ok)
+	})
+
+	t.Run("purge logic after updates", func(t *testing.T) {
+		c := NewCache(3)
+
+		wasInCache := c.Set("aaa", 11)
+		require.False(t, wasInCache)
+
+		wasInCache = c.Set("bbb", 22)
+		require.False(t, wasInCache)
+
+		wasInCache = c.Set("ccc", 33)
+		require.False(t, wasInCache)
+
+		wasInCache = c.Set("aaa", 44)
+		require.True(t, wasInCache)
+
+		_, ok := c.Get("bbb")
+		require.True(t, ok)
+
+		wasInCache = c.Set("eee", 55)
+		require.False(t, wasInCache)
+
+		_, ok = c.Get("ccc")
+		require.False(t, ok)
+	})
+
+	t.Run("clear logic", func(t *testing.T) {
+		c := NewCache(3)
+
+		wasInCache := c.Set("aaa", 11)
+		require.False(t, wasInCache)
+
+		c.Clear()
+
+		wasInCache = c.Set("aaa", 11)
+		require.False(t, wasInCache)
 	})
 }
 
